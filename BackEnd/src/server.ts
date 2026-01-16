@@ -1,10 +1,31 @@
 import dotenv from "dotenv";
 import app from "./app";
+import { connectDB } from "./config/db";
+import { logger } from "./config/loggerConfig";
+import { setServer } from "./utils/shutdown";
 dotenv.config();
 
+const PORT = process.env.PORT || 3030;
 
-const PORT = process.env.PORT || 4000;
+const startServer = async () => {
+  try {
+    await connectDB();
+    const server = app.listen(PORT, () => {
+      logger.access(`Server Running at ${PORT}`);
+    });
+    setServer(server);
+  } catch (err) {
+    logger.debug(`Failed to start server, ${err}`);
+    process.exit(1);
+  }
+};
+startServer();
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+process.on("unhandledRejection", (reason: any) => {
+  logger.error(`Unhandled Promise Rejection reason:${reason}`);
+  process.exit(1);
+});
+process.on("uncaughtException", (err: Error) => {
+  logger.error(`Uncaught Exception err:${err}`);
+  process.exit(1);
 });
