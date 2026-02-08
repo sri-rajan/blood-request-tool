@@ -3,9 +3,8 @@ import app from "./app";
 import { connectDB } from "./config/db";
 import { logger } from "./config/loggerConfig";
 import { setServer } from "./utils/shutdown";
+import { PORT } from "./config/envConfg";
 dotenv.config();
-
-const PORT = process.env.PORT || 3030;
 
 const startServer = async () => {
   try {

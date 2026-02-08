@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import { accessLogMiddleware, logger } from "./config/loggerConfig";
+import { userRouter } from "./user/userRouter";
 
 const app = express();
 
@@ -15,7 +16,7 @@ app.use(accessLogMiddleware);
 // db connection check
 app.use((req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
-    logger.debug("Service Unavailable - DB NOT CONNECTED")
+    logger.debug("Service Unavailable - DB NOT CONNECTED");
     return res.status(503).json({ message: "Service temporarily unavailable" });
   }
   next();
@@ -27,5 +28,6 @@ app.get("/health", (_req, res) => {
 });
 
 //user router and validation middleware
+app.use("/user", userRouter);
 
 export default app;

@@ -23,14 +23,14 @@ const debugWinston = createLogger({
       ({ timestamp, level, message, ...meta }) =>
         `${timestamp} [${level.toUpperCase()}] ${message} ${
           Object.keys(meta)?.length ? JSON.stringify(meta) : ""
-        }`
-    )
+        }`,
+    ),
   ),
   transports: [
     new DailyRotateFile({
       filename: path.join(logDir, "debug-%DATE%.log"),
       datePattern: "YYYY-MM-DD",
-      maxFiles: "14d",
+      maxFiles: "2d",
       zippedArchive: true,
     }),
   ],
@@ -40,13 +40,13 @@ const accessWinston = createLogger({
   level: "info",
   format: format.combine(
     format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    format.printf(({ timestamp, message }) => `${timestamp} ${message}`)
+    format.printf(({ timestamp, message }) => `${timestamp} ${message}`),
   ),
   transports: [
     new DailyRotateFile({
       filename: path.join(logDir, "access-%DATE%.log"),
       datePattern: "YYYY-MM-DD",
-      maxFiles: "14d",
+      maxFiles: "2d",
       zippedArchive: true,
     }),
   ],
@@ -77,7 +77,7 @@ const accessLogMiddleware = morgan(
     stream: {
       write: (message) => logger.access(message.trim()),
     },
-  }
+  },
 );
 
 export { logger, accessLogMiddleware };

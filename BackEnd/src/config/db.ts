@@ -1,11 +1,12 @@
 import { shutdownApp } from "../utils/shutdown";
+import { MONGO_URI } from "./envConfg";
 import { logger } from "./loggerConfig";
 
 const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(MONGO_URI);
   } catch (err) {
     console.error("Initial MongoDB connection failed", err);
     process.exit(1);
