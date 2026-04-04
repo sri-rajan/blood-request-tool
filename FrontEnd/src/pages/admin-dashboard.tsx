@@ -33,7 +33,6 @@ import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger } from "../components/tabs";
 import { useAuth } from "../context/AuthContext";
 // import type { BloodRequest, RequestStatus } from "../api/blood-request.api";
-import { logoutApi } from "../api/auth.api";
 import { store, type BloodRequest, type RequestStatus } from "../lib/store";
 
 export default function AdminDashboard() {
@@ -67,7 +66,7 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = () => {
-    logoutApi();
+    logout();
     navigate("/");
   };
 

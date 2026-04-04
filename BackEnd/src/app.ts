@@ -7,7 +7,12 @@ import { userRouter } from "./user/userRouter";
 const app = express();
 
 // basic middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true, // if using cookies
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // logger to debuging and request information

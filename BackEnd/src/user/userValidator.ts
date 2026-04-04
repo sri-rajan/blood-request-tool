@@ -40,6 +40,11 @@ const addUserValidator = Joi.object({
     .valid(...Object.values(UserRole))
     .optional(),
 });
+const adminAddUserValidator = addUserValidator.append({
+  secret: Joi.string().required().messages({
+    "string.empty": "Secret is required",
+  }),
+});
 
 const loginUserValidator = Joi.object({
   email: Joi.string().trim().regex(emailRegex).required().messages({
@@ -52,4 +57,4 @@ const loginUserValidator = Joi.object({
   }),
 });
 
-export { addUserValidator, loginUserValidator };
+export { addUserValidator, loginUserValidator, adminAddUserValidator };

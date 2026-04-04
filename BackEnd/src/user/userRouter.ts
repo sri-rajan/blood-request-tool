@@ -7,7 +7,11 @@ import {
   addAdminUserController,
 } from "./userController";
 import { validate } from "../utils/middleware/validate";
-import { addUserValidator, loginUserValidator } from "./userValidator";
+import {
+  addUserValidator,
+  adminAddUserValidator,
+  loginUserValidator,
+} from "./userValidator";
 import { auth } from "../utils/middleware/authMiddleware";
 
 const userRouter = Router();
@@ -15,7 +19,7 @@ const userRouter = Router();
 // route for adding the admin user manually
 userRouter.post(
   "/add-admin",
-  validate(addUserValidator),
+  validate(adminAddUserValidator),
   addAdminUserController,
 );
 

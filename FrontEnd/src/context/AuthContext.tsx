@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { loginApi, logoutApi } from "../api/auth.api";
 import type { LoginRequest, User } from "../types/auth.types";
@@ -11,7 +11,7 @@ interface AuthState {
 interface AuthContextType {
   auth: AuthState;
   setAuth: React.Dispatch<React.SetStateAction<AuthState>>;
-  login: (data: LoginRequest) => Promise<void>;
+  login: (data: LoginRequest) => Promise<boolean>;
   logout: () => Promise<void>;
 }
 
@@ -26,19 +26,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user: null,
     accessToken: null,
   });
+  useEffect(() => {
+    const stored = localStorage.getItem("auth");
+    if (stored) {
+      setAuth(JSON.parse(stored));
+    }
+  }, []);
 
   const login = async (data: LoginRequest) => {
-    const res = await loginApi(data);
+    try {
+      const res = await loginApi(data);
 
-    setAuth({
-      user: res.user,
-      accessToken: res.accessToken,
-    });
+      setAuth({
+        user: res.user,
+        accessToken: res.accessToken,
+      });
+      localStorage.setItem(
+        "auth",
+        JSON.stringify({
+          user: res.user,
+          accessToken: res.accessToken,
+        }),
+      );
+      return true;
+    } catch (error) {
+      console.log("this is error", error);
+      return false;
+    }
   };
 
   const logout = async () => {
     try {
       await logoutApi();
+
+      localStorage.removeItem("auth");
+      setAuth({
+        user: null,
+        accessToken: null,
+      });
     } catch (err) {
       console.error("Logout error:", err);
     } finally {

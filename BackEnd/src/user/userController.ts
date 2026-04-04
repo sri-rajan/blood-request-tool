@@ -41,7 +41,7 @@ const addUser = async ({
     is_verified: true, // TODO: Add Verification Method via email afterwards
     ...(userId ? { created_by: String(userId) } : {}),
   });
-  return user;
+  return { ...user, password: "XXXX" };
 };
 
 const addUserController = async (req: AuthRequest, res: Response) => {
@@ -98,7 +98,18 @@ const loginUserController = async (req: AuthRequest, res: Response) => {
       throw { message: "Wrong password", status: 400 };
     }
     const token = generateToken(user);
-    return res.status(200).json({ token, message: "Successfully Logged In" });
+    return res
+      .status(200)
+      .json({
+        accessToken: token,
+        user: {
+          id: user._id,
+          role: user.role,
+          name: user.name,
+          email: user.email,
+        },
+        message: "Successfully Logged In",
+      });
   } catch (error: any) {
     sendErrorResponse({
       req,

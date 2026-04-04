@@ -9,8 +9,10 @@ dotenv.config();
 const startServer = async () => {
   try {
     await connectDB();
+    console.log("thsi isconccec");
     const server = app.listen(PORT, () => {
       logger.access(`Server Running at ${PORT}`);
+      console.log(`Server Running at ${PORT}`);
     });
     setServer(server);
   } catch (err) {

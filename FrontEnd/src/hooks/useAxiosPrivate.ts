@@ -35,12 +35,20 @@ export const useAxiosPrivate = () => {
             accessToken: res.data.accessToken,
           }));
 
+          localStorage.setItem(
+            "auth",
+            JSON.stringify({
+              user: auth.user,
+              accessToken: res.data.accessToken,
+            }),
+          );
+
           prevRequest.headers["Authorization"] =
             `Bearer ${res.data.accessToken}`;
 
           return axios(prevRequest);
         }
-
+        localStorage.removeItem("auth");
         return Promise.reject(error);
       },
     );

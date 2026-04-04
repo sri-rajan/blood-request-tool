@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../components/button";
 import { Input } from "../components/input";
@@ -13,6 +13,7 @@ import {
 import { Alert, AlertDescription } from "../components/alert";
 import { Heart, AlertCircle } from "lucide-react";
 import { auth } from "../lib/store";
+import { useAuth } from "../context/AuthContext";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -20,15 +21,22 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { auth, setAuth, login, logout } = useAuth();
+
+  useEffect(() => {
+    if (auth.accessToken) {
+      navigate("/admin/dashboard");
+      return;
+    }
+  }, [navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    setTimeout(() => {
-      if (auth.login(email, password)) {
-        auth.setAuthenticated(true);
+    setTimeout(async () => {
+      if (await login({ email, password })) {
         navigate("/admin/dashboard");
       } else {
         setError("Invalid email or password");
