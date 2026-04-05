@@ -24,22 +24,19 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import {
-  auth,
-  store,
-  type BloodRequest,
-  type RequestStatus,
-} from "../lib/store";
+import { store, type BloodRequest, type RequestStatus } from "../lib/store";
 import { toast } from "sonner";
+import { useAuth } from "../context/AuthContext";
 
 export default function RequestDetails() {
   const navigate = useNavigate();
+  const { auth } = useAuth();
   const { id } = useParams();
   const [request, setRequest] = useState<BloodRequest | null>(null);
   const [status, setStatus] = useState<RequestStatus>("pending");
 
   useEffect(() => {
-    if (!auth.isAuthenticated()) {
+    if (!auth.accessToken) {
       navigate("/");
       return;
     }

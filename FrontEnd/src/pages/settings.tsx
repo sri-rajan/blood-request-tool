@@ -44,8 +44,8 @@ import {
   Save,
   Palette,
 } from "lucide-react";
-import { auth } from "../lib/store";
 import { toast } from "sonner";
+import { useAuth } from "../context/AuthContext";
 
 interface AppSettings {
   primaryColor: string;
@@ -81,6 +81,7 @@ const mockUsers: User[] = [
 
 export default function Settings() {
   const navigate = useNavigate();
+  const { auth } = useAuth();
   const [settings, setSettings] = useState<AppSettings>({
     primaryColor: "#E53935",
     defaultExpiryHours: 5,
@@ -98,7 +99,7 @@ export default function Settings() {
   const [isEditUserOpen, setIsEditUserOpen] = useState(false);
 
   useEffect(() => {
-    if (!auth.isAuthenticated()) {
+    if (!auth.accessToken) {
       navigate("/");
       return;
     }

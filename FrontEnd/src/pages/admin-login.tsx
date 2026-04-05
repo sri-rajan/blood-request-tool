@@ -28,7 +28,7 @@ export default function AdminLogin() {
       navigate("/admin/dashboard");
       return;
     }
-  }, [navigate]);
+  }, [auth]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

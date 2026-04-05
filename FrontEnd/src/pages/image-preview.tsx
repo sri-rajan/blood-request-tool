@@ -12,12 +12,14 @@ import {
   Hospital,
   AlertTriangle,
 } from "lucide-react";
-import { auth, store, type BloodRequest } from "../lib/store";
+import { store, type BloodRequest } from "../lib/store";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
+import { useAuth } from "../context/AuthContext";
 
 export default function ImagePreview() {
   const navigate = useNavigate();
+  const { auth } = useAuth();
   const { id } = useParams();
   const [request, setRequest] = useState<BloodRequest | null>(null);
   const [downloading, setDownloading] = useState(false);
@@ -25,7 +27,7 @@ export default function ImagePreview() {
   const posterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!auth.isAuthenticated()) {
+    if (!auth.accessToken) {
       navigate("/");
       return;
     }
