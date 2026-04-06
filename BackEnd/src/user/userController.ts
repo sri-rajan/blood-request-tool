@@ -6,6 +6,7 @@ import { AuthRequest } from "../interface";
 import { sendErrorResponse } from "../config/errorHandler";
 import { UserRole } from "./userInterface";
 import { INTERNAL_SECRET } from "../config/envConfg";
+import { organizationModel } from "../organization/organizationMode";
 
 interface addUserInterface {
   name: string;
@@ -15,6 +16,7 @@ interface addUserInterface {
     value: string;
   };
   password: string;
+  orgId: string;
   role?: string;
   userId?: string;
 }
@@ -26,6 +28,7 @@ const addUser = async ({
   role = UserRole.USER,
   userId,
   phone,
+  orgId,
 }: addUserInterface) => {
   const exists = await userModel.findOne({ email }).lean();
   if (exists) throw { message: "User exists", status: 400 };
@@ -38,15 +41,17 @@ const addUser = async ({
     phone,
     password: hash,
     role,
+    org_id: orgId,
     is_verified: true, // TODO: Add Verification Method via email afterwards
     ...(userId ? { created_by: String(userId) } : {}),
   });
-  return { ...user, password: "XXXX" };
+  return { _id: user._id };
 };
 
 const addUserController = async (req: AuthRequest, res: Response) => {
   try {
     const { name, email, phone, password, role } = req.body;
+    const { org_id } = req?.user || {};
     const user = await addUser({
       name,
       email,
@@ -54,6 +59,7 @@ const addUserController = async (req: AuthRequest, res: Response) => {
       password,
       role,
       userId: req?.user?.id || "",
+      orgId: String(org_id),
     });
     return res.status(200).json({ user, message: "Successfully Added user" });
   } catch (error: any) {
@@ -67,17 +73,41 @@ const addUserController = async (req: AuthRequest, res: Response) => {
 };
 const addAdminUserController = async (req: Request, res: Response) => {
   try {
-    const { name, email, phone, password, role, secret } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      password,
+      role,
+      secret,
+      organization_name,
+      country = "IN",
+      state = "TN",
+      city = "CHENNAI",
+    } = req.body;
     if (!secret || secret != INTERNAL_SECRET) {
       throw { message: "Invalid Secret" };
     }
-    const user = await addUser({ name, email, phone, password, role });
+    const organization = await organizationModel.create({
+      name: organization_name,
+      country,
+      state,
+      city,
+    });
+    const user = await addUser({
+      name,
+      email,
+      phone,
+      password,
+      role,
+      orgId: String(organization._id),
+    });
     return res
       .status(200)
       .json({ user, message: "Successfully Added Admin User" });
   } catch (error: any) {
     sendErrorResponse({
-      req,
+      req: req as any,
       res,
       message: error?.message,
       status: error?.status,
@@ -98,18 +128,17 @@ const loginUserController = async (req: AuthRequest, res: Response) => {
       throw { message: "Wrong password", status: 400 };
     }
     const token = generateToken(user);
-    return res
-      .status(200)
-      .json({
-        accessToken: token,
-        user: {
-          id: user._id,
-          role: user.role,
-          name: user.name,
-          email: user.email,
-        },
-        message: "Successfully Logged In",
-      });
+    return res.status(200).json({
+      accessToken: token,
+      user: {
+        id: user._id,
+        role: user.role,
+        name: user.name,
+        email: user.email,
+        org_id: user.org_id,
+      },
+      message: "Successfully Logged In",
+    });
   } catch (error: any) {
     sendErrorResponse({
       req,

@@ -14,6 +14,7 @@ const sendErrorResponse = ({
   status: number;
 }) => {
   logger.debug(`Request Error | 
+  USER:${req?.user?.id}
   METHOD:${req.method} 
   URL:${req.url} 
   BODY:${JSON.stringify(req.body)} 

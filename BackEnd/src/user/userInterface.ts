@@ -11,6 +11,7 @@ interface User {
     value: string;
   };
   password: string;
+  org_id: string;
   role: UserRole;
   created_at: number;
   created_by: string;

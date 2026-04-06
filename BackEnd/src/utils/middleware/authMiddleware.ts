@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../jwt";
+import { UserRole } from "../../user/userInterface";
 
 export const auth = (req: any, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -16,7 +17,7 @@ export const auth = (req: any, res: Response, next: NextFunction) => {
 };
 
 export const isAdmin = (req: any, res: Response, next: NextFunction) => {
-  if (req.user.role !== "ADMIN")
+  if (req.user.role !== UserRole.ADMIN)
     return res.status(403).json({ msg: "Admin only" });
 
   next();

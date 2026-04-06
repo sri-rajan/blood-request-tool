@@ -11,6 +11,7 @@ const userSchema = new Schema<User, Model<User>>({
     value: String,
   },
   password: String,
+  org_id: String,
   role: { type: String, enum: UserRole },
   created_at: { type: Number, default: () => moment().valueOf() },
   created_by: String,
