@@ -6,7 +6,7 @@ import { AuthRequest } from "../interface";
 import { sendErrorResponse } from "../config/errorHandler";
 import { UserRole } from "./userInterface";
 import { INTERNAL_SECRET } from "../config/envConfg";
-import { organizationModel } from "../organization/organizationMode";
+import { organizationModel } from "../organization/organizationModel";
 
 interface addUserInterface {
   name: string;
@@ -83,7 +83,7 @@ const addAdminUserController = async (req: Request, res: Response) => {
       organization_name,
       country = "IN",
       state = "TN",
-      city = "CHENNAI",
+      city = "chennai",
     } = req.body;
     if (!secret || secret != INTERNAL_SECRET) {
       throw { message: "Invalid Secret" };

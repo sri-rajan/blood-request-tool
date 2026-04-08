@@ -3,7 +3,7 @@ import moment from "moment";
 import { ORGANIZATION_MODEL } from "../config/envConfg";
 import { Organization } from "./organizationInterface";
 
-const userSchema = new Schema<Organization, Model<Organization>>({
+const orgSchema = new Schema<Organization, Model<Organization>>({
   name: String,
   country: String,
   state: String,
@@ -18,7 +18,7 @@ const userSchema = new Schema<Organization, Model<Organization>>({
 
 const organizationModel = model(
   ORGANIZATION_MODEL,
-  userSchema,
+  orgSchema,
   ORGANIZATION_MODEL,
 );
 

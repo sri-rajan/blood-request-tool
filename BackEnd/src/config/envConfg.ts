@@ -10,6 +10,7 @@ const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "thisissecreet2";
 //DB ENVs
 const USER_MODEL = process.env.USER_MODEL || "users";
 const ORGANIZATION_MODEL = process.env.ORGANIZATION_MODEL || "organizations";
+const GENERATE_LINK_MODEL = process.env.GENERATE_LINK_MODEL || "generate_link";
 
 export {
   USER_MODEL,
@@ -18,4 +19,5 @@ export {
   JWT_SECRET,
   INTERNAL_SECRET,
   ORGANIZATION_MODEL,
+  GENERATE_LINK_MODEL,
 };
