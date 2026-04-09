@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import { accessLogMiddleware, logger } from "./config/loggerConfig";
 import { userRouter } from "./user/userRouter";
+import { generateLinkRouter } from "./generateLink/generateLinkRouter";
 
 const app = express();
 
@@ -34,5 +35,6 @@ app.get("/health", (_req, res) => {
 
 //user router and validation middleware
 app.use("/user", userRouter);
+app.use("/generate_link", generateLinkRouter);
 
 export default app;

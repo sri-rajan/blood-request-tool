@@ -51,14 +51,14 @@ const addUser = async ({
 const addUserController = async (req: AuthRequest, res: Response) => {
   try {
     const { name, email, phone, password, role } = req.body;
-    const { org_id } = req?.user || {};
+    const { org_id, id } = req?.user || {};
     const user = await addUser({
       name,
       email,
       phone,
       password,
       role,
-      userId: req?.user?.id || "",
+      userId: id || "",
       orgId: String(org_id),
     });
     return res.status(200).json({ user, message: "Successfully Added user" });
