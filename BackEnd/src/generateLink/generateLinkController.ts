@@ -4,6 +4,7 @@ import { AuthRequest } from "../interface";
 import { generateLinkModel } from "./generateLinkModel";
 import { GenerateLinkStatus } from "./generateLinkInterface";
 import { Types } from "mongoose";
+import { bloodRequestModel } from "../bloodRequest/bloodRequestModel";
 
 const generateLinkController = async (req: AuthRequest, res: Response) => {
   try {
@@ -40,13 +41,23 @@ const getGenerateLinkController = async (req: Request, res: Response) => {
         message: "GeneratedLink Data not found",
       };
     }
+    let bloodRequestDetails;
+    const bloodRequestId = generatedLinkData.blood_req_id;
+    if (bloodRequestId) {
+      bloodRequestDetails = await bloodRequestModel
+        .findById(String(bloodRequestId))
+        .lean();
+      if (!bloodRequestDetails) {
+        throw {
+          message: "Blood Request Details not found",
+        };
+      }
+    }
 
-    return res
-      .status(200)
-      .json({
-        message: "Successfully Retrived Generated Link",
-        data: generatedLinkData,
-      });
+    return res.status(200).json({
+      message: "Successfully Retrived Generated Link",
+      data: { generatedLinkData, bloodRequestDetails },
+    });
   } catch (error: any) {
     sendErrorResponse({
       req: req as any,
