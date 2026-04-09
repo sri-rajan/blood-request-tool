@@ -43,7 +43,10 @@ const getGenerateLinkController = async (req: Request, res: Response) => {
 
     return res
       .status(200)
-      .json({ message: "Successfully Retrived Generated Link" });
+      .json({
+        message: "Successfully Retrived Generated Link",
+        data: generatedLinkData,
+      });
   } catch (error: any) {
     sendErrorResponse({
       req: req as any,
