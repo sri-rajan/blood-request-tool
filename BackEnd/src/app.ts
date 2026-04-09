@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { accessLogMiddleware, logger } from "./config/loggerConfig";
 import { userRouter } from "./user/userRouter";
 import { generateLinkRouter } from "./generateLink/generateLinkRouter";
+import { customerPortalRouter } from "./customerportal/customerPortalRouter";
 
 const app = express();
 
@@ -36,5 +37,6 @@ app.get("/health", (_req, res) => {
 //user router and validation middleware
 app.use("/user", userRouter);
 app.use("/generate_link", generateLinkRouter);
+app.use("/customer_portal", customerPortalRouter);
 
 export default app;

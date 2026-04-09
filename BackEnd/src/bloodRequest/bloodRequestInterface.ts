@@ -18,10 +18,9 @@ enum BloodRequestStatus {
 
 interface BloodRequest {
   request_id: string;
-  name: string;
+  patient_name: string;
   blood_group: BloodGroup;
   hospital: string;
-  patient_name: string;
   reason: string;
   required_date: string;
   required_time: string;
