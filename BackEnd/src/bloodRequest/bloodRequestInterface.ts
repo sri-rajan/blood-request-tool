@@ -16,8 +16,7 @@ enum BloodRequestStatus {
   PROCESSED = "processed",
 }
 
-interface BloodRequest {
-  request_id: string;
+interface BloodRequestBase {
   patient_name: string;
   blood_group: BloodGroup;
   hospital: string;
@@ -29,6 +28,8 @@ interface BloodRequest {
     country_code: string;
     value: string;
   };
+}
+interface BloodRequest extends BloodRequestBase {
   status: BloodRequestStatus;
   created_at: number;
   created_by: string;
@@ -36,4 +37,4 @@ interface BloodRequest {
   updated_by: string;
 }
 
-export { BloodRequest, BloodGroup, BloodRequestStatus };
+export { BloodRequest, BloodGroup, BloodRequestStatus, BloodRequestBase };

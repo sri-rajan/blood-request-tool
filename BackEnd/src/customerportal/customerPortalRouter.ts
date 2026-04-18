@@ -1,10 +1,11 @@
 import { Router } from "express";
 import {
-  addBloodRequestForm,
+  addBloodRequestFormController,
+  editBloodRequestFormController,
   getCustomerPortalController,
 } from "./customerPortalController";
 import { validate } from "../utils/middleware/validate";
-import { addBloodRequestFormValidate } from "./customerPortalVallidator";
+import { bloodRequestFormValidate } from "./customerPortalVallidator";
 
 const customerPortalRouter = Router();
 
@@ -12,8 +13,13 @@ customerPortalRouter.get("/:customerPortalId", getCustomerPortalController);
 
 customerPortalRouter.post(
   "/:customerPortalId",
-  validate(addBloodRequestFormValidate),
-  addBloodRequestForm,
+  validate(bloodRequestFormValidate),
+  addBloodRequestFormController,
+);
+customerPortalRouter.put(
+  "/:customerPortalId",
+  validate(bloodRequestFormValidate),
+  editBloodRequestFormController,
 );
 
 export { customerPortalRouter };

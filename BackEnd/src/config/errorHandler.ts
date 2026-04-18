@@ -21,6 +21,7 @@ const sendErrorResponse = ({
   QUERY:${JSON.stringify(req.query)}
   PARAMS:${JSON.stringify(req.params)}
   IP:${req.ip}`);
+
   return res.status(status || 500).json({ message: message || "Server Error" });
 };
 

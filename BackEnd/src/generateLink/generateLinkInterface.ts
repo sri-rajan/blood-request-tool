@@ -1,7 +1,8 @@
 enum GenerateLinkStatus {
-  NEW = "new",
-  UPDATED = "updated",
-  COMPLETED = "completed",
+  NEW = "NEW",
+  UPDATED = "UPDATED",
+  REJECTED = "REJECTED",
+  COMPLETED = "COMPLETED",
 }
 
 interface GenerateLink {
