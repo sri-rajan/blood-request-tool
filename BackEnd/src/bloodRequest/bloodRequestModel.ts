@@ -8,6 +8,7 @@ import {
 import { BLOOD_REQUEST_MODEL } from "../config/envConfg";
 
 const bloodRequestSchema = new Schema<BloodRequest, Model<BloodRequest>>({
+  org_id: String,
   patient_name: String,
   blood_group: { type: String, enum: Object.values(BloodGroup) },
   hospital: String,

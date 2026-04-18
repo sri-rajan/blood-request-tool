@@ -10,10 +10,10 @@ enum BloodGroup {
 }
 
 enum BloodRequestStatus {
-  PENDING = "pending",
-  APPROVED = "approved",
-  REJECTED = "rejected",
-  PROCESSED = "processed",
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+  PROCESSED = "PROCESSED",
 }
 
 interface BloodRequestBase {
@@ -30,6 +30,7 @@ interface BloodRequestBase {
   };
 }
 interface BloodRequest extends BloodRequestBase {
+  org_id: string;
   status: BloodRequestStatus;
   created_at: number;
   created_by: string;

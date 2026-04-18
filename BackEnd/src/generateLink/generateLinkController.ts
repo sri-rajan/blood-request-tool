@@ -5,9 +5,11 @@ import { generateLinkModel } from "./generateLinkModel";
 import { GenerateLinkStatus } from "./generateLinkInterface";
 import { Types } from "mongoose";
 import { bloodRequestModel } from "../bloodRequest/bloodRequestModel";
+import { checkUserInRequest } from "../utils/helper";
 
 const generateLinkController = async (req: AuthRequest, res: Response) => {
   try {
+    checkUserInRequest(req);
     const { org_id, id } = req?.user || {};
     const generateLink = await generateLinkModel.create({
       org_id: String(org_id),

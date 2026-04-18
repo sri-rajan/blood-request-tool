@@ -7,6 +7,7 @@ import { sendErrorResponse } from "../config/errorHandler";
 import { UserRole } from "./userInterface";
 import { INTERNAL_SECRET } from "../config/envConfg";
 import { organizationModel } from "../organization/organizationModel";
+import { checkUserInRequest } from "../utils/helper";
 
 interface addUserInterface {
   name: string;
@@ -51,6 +52,7 @@ const addUser = async ({
 const addUserController = async (req: AuthRequest, res: Response) => {
   try {
     const { name, email, phone, password, role } = req.body;
+    checkUserInRequest(req);
     const { org_id, id } = req?.user || {};
     const user = await addUser({
       name,

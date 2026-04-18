@@ -1,31 +1,22 @@
 import { Router } from "express";
 import {
   addUserController,
-  loginUserController,
   getUserListController,
   deleteUserController,
-  addAdminUserController,
 } from "./userController";
 import { validate } from "../utils/middleware/validate";
-import {
-  addUserValidator,
-  adminAddUserValidator,
-  loginUserValidator,
-} from "./userValidator";
-import { auth } from "../utils/middleware/authMiddleware";
+import { addUserValidator } from "./userValidator";
+import { authenticate } from "../utils/middleware/authMiddleware";
 
 const userRouter = Router();
 
-// route for adding the admin user manually
 userRouter.post(
-  "/add-admin",
-  validate(adminAddUserValidator),
-  addAdminUserController,
+  "/add",
+  authenticate,
+  validate(addUserValidator),
+  addUserController,
 );
-
-userRouter.post("/login", validate(loginUserValidator), loginUserController);
-userRouter.post("/add", auth, validate(addUserValidator), addUserController);
-userRouter.get("/", auth, getUserListController);
-userRouter.delete("/:userId", auth, deleteUserController);
+userRouter.get("/", authenticate, getUserListController);
+userRouter.delete("/:userId", authenticate, deleteUserController);
 
 export { userRouter };
