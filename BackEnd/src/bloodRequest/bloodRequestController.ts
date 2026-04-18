@@ -143,7 +143,7 @@ const updateBloodRequestStatusController = async (
     checkUserInRequest(req);
     const { org_id, id } = req.user;
     const bloodRequestDetail = await bloodRequestModel.findOne({
-      _id: new Types.ObjectId(String(id)),
+      _id: new Types.ObjectId(String(bloodRequestId)),
       org_id: String(org_id),
     });
     if (!bloodRequestDetail) {
@@ -176,8 +176,66 @@ const updateBloodRequestStatusController = async (
   }
 };
 
+const getBloodRequestListController = async (
+  req: AuthRequest,
+  res: Response,
+) => {
+  try {
+    checkUserInRequest(req);
+    const { org_id, id } = req.user;
+    const bloodRequestDetail = await bloodRequestModel
+      .find({
+        org_id: String(org_id),
+      })
+      .lean();
+    return res.status(200).json({
+      message: "Successfully Retrived Blood Request",
+      doc: bloodRequestDetail || [],
+    });
+  } catch (error: any) {
+    sendErrorResponse({
+      req: req as any,
+      res,
+      message: error?.message,
+      status: error?.status,
+    });
+  }
+};
+
+const getBloodRequestController = async (req: AuthRequest, res: Response) => {
+  try {
+    const { bloodRequestId } = req.params;
+    checkUserInRequest(req);
+    const { org_id, id } = req.user;
+    const bloodRequestDetail = await bloodRequestModel
+      .findOne({
+        _id: new Types.ObjectId(String(bloodRequestId)),
+        org_id: String(org_id),
+      })
+      .lean();
+    if (!bloodRequestDetail) {
+      throw {
+        message: "Blood Request Not Found",
+      };
+    }
+    return res.status(200).json({
+      message: "Successfully Retrived Blood Request",
+      doc: bloodRequestDetail,
+    });
+  } catch (error: any) {
+    sendErrorResponse({
+      req: req as any,
+      res,
+      message: error?.message,
+      status: error?.status,
+    });
+  }
+};
+
 export {
   addBloodRequest,
   editBloodRequest,
   updateBloodRequestStatusController,
+  getBloodRequestController,
+  getBloodRequestListController,
 };
