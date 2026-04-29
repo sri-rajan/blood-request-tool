@@ -15,6 +15,8 @@ import {
   addAdminUserController,
   loginUserController,
 } from "./user/userController";
+import { organizationRouter } from "./organization/organizationRouter";
+import { authenticate } from "./utils/middleware/authMiddleware";
 
 const app = express();
 
@@ -55,9 +57,10 @@ app.post(
 app.post("user/login", validate(loginUserValidator), loginUserController);
 
 //user router and validation middleware
-app.use(":organizationId/user", userRouter);
-app.use(":organizationId/generate_link", generateLinkRouter);
-app.use(":organizationId/blood_request", bloodRequestRouter);
+app.use(":organizationId", authenticate, organizationRouter);
+app.use(":organizationId/user", authenticate, userRouter);
+app.use(":organizationId/generate_link", authenticate, generateLinkRouter);
+app.use(":organizationId/blood_request", authenticate, bloodRequestRouter);
 
 // customerportal routers
 app.use("/customer_portal", customerPortalRouter);
