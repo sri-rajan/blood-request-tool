@@ -10,6 +10,8 @@ import { sendErrorResponse } from "../config/errorHandler";
 import { Response } from "express";
 import { organizationModel } from "../organization/organizationModel";
 import { checkUserInRequest } from "../utils/helper";
+import { getValidTillUtcFromConfig } from "../utils/dateTimeComputerHelper";
+import { BloodRequestSettings } from "../organization/organizationInterface";
 
 type bloodRequestDataBase =
   | {
@@ -29,13 +31,31 @@ type bloodRequestData<T extends "create" | "update"> = T extends "update"
   ? bloodRequestDataBase & { bloodRequestId: string } // required
   : bloodRequestDataBase & { bloodRequestId?: string }; // optional
 
+const checkGeneratedUrlExpiryTime = ({
+  bloodRequestSettings,
+}: {
+  bloodRequestSettings: BloodRequestSettings;
+}) => {
+  let isValid = true;
+  if (bloodRequestSettings?.expiry_after?.value) {
+    const { value, typ } = bloodRequestSettings?.expiry_after;
+    const expiryTime = getValidTillUtcFromConfig({
+      value: value,
+      type: typ,
+    });
+    if (expiryTime < moment().utc().valueOf()) {
+      isValid = false;
+    }
+  }
+  return isValid;
+};
 const addBloodRequest = async ({
   data,
   userId,
   customerPortalId,
   org_id,
 }: bloodRequestData<"create">) => {
-  let OrgId = org_id;
+  let orgId = org_id;
   if (customerPortalId) {
     const generatedLinkData = await generateLinkModel
       .findOne({
@@ -52,11 +72,26 @@ const addBloodRequest = async ({
         message: "Request Already Created",
       };
     }
-    OrgId = String(generatedLinkData.org_id);
+    orgId = String(generatedLinkData.org_id);
+    const organization = await organizationModel.findById(orgId).lean();
+    if (!organization) {
+      throw {
+        message: "organization not found",
+      };
+    }
+    const isValid = checkGeneratedUrlExpiryTime({
+      bloodRequestSettings: organization.blood_request_settings,
+    });
+    if (!isValid) {
+      throw {
+        message: "Link Expired",
+      };
+    }
   }
+
   const bloodRequestData = await bloodRequestModel.create({
     ...data,
-    org_id: String(OrgId || ""),
+    org_id: String(orgId || ""),
     ...(userId ? { created_by: userId } : {}),
   });
   if (customerPortalId) {
@@ -79,7 +114,7 @@ const editBloodRequest = async ({
   org_id,
 }: bloodRequestData<"update">) => {
   try {
-    let OrgId = org_id;
+    let orgId = org_id;
     if (customerPortalId) {
       const generatedLinkData = await generateLinkModel
         .findOne({
@@ -96,12 +131,26 @@ const editBloodRequest = async ({
           message: "Can't Edit Request Kindly contact Admin",
         };
       }
-      OrgId = generatedLinkData.org_id;
+      orgId = generatedLinkData.org_id;
+      const organization = await organizationModel.findById(orgId).lean();
+      if (!organization) {
+        throw {
+          message: "organization not found",
+        };
+      }
+      const isValid = checkGeneratedUrlExpiryTime({
+        bloodRequestSettings: organization?.blood_request_settings,
+      });
+      if (!isValid) {
+        throw {
+          message: "Link Expired",
+        };
+      }
     }
     const bloodRequestDetail = await bloodRequestModel
       .findOne({
         _id: new Types.ObjectId(String(bloodRequestId)),
-        org_id: String(OrgId),
+        org_id: String(orgId),
       })
       .lean();
     if (!bloodRequestDetail) {
@@ -129,7 +178,8 @@ const editBloodRequest = async ({
     }
     return bloodRequestData;
   } catch (error) {
-    logger.debug(`editBloodRequestForm error`);
+    logger.debug(`editBloodRequestForm error ${error}`);
+    throw error;
   }
 };
 
